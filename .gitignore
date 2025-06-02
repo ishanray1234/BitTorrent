@@ -2,3 +2,7 @@ torrentfile/t
 .vscode/settings.json
 bencode/t
 peers/test_peer
+test
+.gitignore
+torrentfile/test.cpp.torrent
+test.cpp.torrent
