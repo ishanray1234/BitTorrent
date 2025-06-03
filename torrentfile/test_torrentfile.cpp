@@ -22,7 +22,9 @@ int main(int argc, char* argv[]) {
     try {
         string torrent_file_path = argv[1];
         TorrentFile torrent_file = Open(torrent_file_path);
-        // torrent_file.display();
+        cout<<endl;
+        cout << "Torrent File Information:" << endl;
+        torrent_file.display();
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
         return 1;

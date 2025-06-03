@@ -19,20 +19,6 @@ class TorrentFile {
         int PieceLength; // Length of each piece in bytes
         int Length; // Total length of the file in bytes
         string Name; // Name of the file
-
-        // Constructor to initialize TorrentFile with metadata
-        TorrentFile(string announceUrl, array<unsigned char, 20> infoHashValue,
-                    vector<array<unsigned char, 20>> pieceHashesList, int pieceLength, int totalLength, string name)
-            : announce(announceUrl), infoHash(infoHashValue), pieceHashes(pieceHashesList),
-              PieceLength(pieceLength), Length(totalLength), Name(name) {}
-        // Function to display torrent file information
-        void display() const {
-            cout << "Announce URL: " << announce << endl;cout << "Info Hash: ";
-            for (const auto& byte : infoHash) {
-                cout << hex << static_cast<int>(byte);
-            }cout << endl;
-            cout << "Piece Length: " << PieceLength << " bytes" << endl;cout << "Total Length: " << Length << " bytes" << endl;
-            cout << "Name: " << Name << endl;cout << "Number of Pieces: " << pieceHashes.size() << endl;}
 };
 
 class bencodeInfo {
@@ -43,7 +29,7 @@ class bencodeInfo {
         string Pieces; // Concatenated SHA1 hashes of each piece
     
         // Function to display bencodeInfo information
-        void display() const {
+        void display() {
             cout << "Name: " << Name << endl;cout << "Piece Length: " << PieceLength << " bytes" << endl;
             cout << "Total Length: " << Length << " bytes" << endl;cout << "Pieces: " << Pieces << endl;}
 };
@@ -76,7 +62,14 @@ vector<array<unsigned char, 20>> splitPieceHashes(const string& pieces) {
 }
 
 TorrentFile toTorrentFile(const bencodeTorrent& bencode_torrent, const json& info) {
-    // cout<< "Converting bencodeTorrent to TorrentFile..." << endl;
+    cout<< "Converting bencodeTorrent to TorrentFile..." << endl;
+    TorrentFile torrent_file;
+    torrent_file.announce = bencode_torrent.Announce;
+    torrent_file.PieceLength = (bencode_torrent.Info.PieceLength);
+    torrent_file.Length = bencode_torrent.Info.Length;
+    torrent_file.Name = bencode_torrent.Info.Name;
+
+
     string bencoded_info = encode_bencode(info);
     cout << "Bencoded Info: " << bencoded_info << endl;
 
@@ -84,28 +77,25 @@ TorrentFile toTorrentFile(const bencodeTorrent& bencode_torrent, const json& inf
     SHA1(reinterpret_cast<const unsigned char*>(bencoded_info.data()), bencoded_info.size(), hash.data());
     // return hash;
     for (unsigned char byte : hash) {
-        // printf("%02x ", byte);
-        cout<< hex << static_cast<int>(byte)<<" ";
+        printf("%02x ", byte);
+        // cout<< hex << static_cast<int>(byte)<<" ";
     }
     cout<<endl;
+
+    torrent_file.infoHash = hash;
 
     vector<array<unsigned char, 20>> piece_hashes = splitPieceHashes(bencode_torrent.Info.Pieces);
     for(const auto& piece_hash : piece_hashes) {
         cout << "Piece Hash: ";
         for (unsigned char byte : piece_hash) {
-            cout << hex << static_cast<int>(byte) << " ";
+            printf("%02x ", byte);
+            // cout << hex << static_cast<int>(byte) << " ";
         }
         cout << endl;
     }
+    torrent_file.pieceHashes = piece_hashes;
 
-    TorrentFile torrent_file(
-        bencode_torrent.Announce,
-        hash, // InfoHash is calculated from the bencoded info
-        piece_hashes, // Piece hashes are derived from the pieces string
-        bencode_torrent.Info.PieceLength,
-        bencode_torrent.Info.Length,
-        bencode_torrent.Info.Name
-    );
+    // torrent_file.display();
     
     return torrent_file;
 }
@@ -137,12 +127,12 @@ TorrentFile Open(const std::string& path) {
     bencode_torrent.Info.Length = info["length"].get<int>();
     bencode_torrent.Info.Pieces = info["pieces"].get<string>();
 
-    // cout<< "Parsed Torrent File:" << endl;
-    // cout << "Announce URL: " << bencode_torrent.Announce << endl;
-    // cout << "Name: " << bencode_torrent.Info.Name << endl;
-    // cout << "Piece Length: " << bencode_torrent.Info.PieceLength << " bytes" << endl;
-    // cout << "Total Length: " << bencode_torrent.Info.Length << " bytes" << endl;
-    // cout << "Pieces: " << bencode_torrent.Info.Pieces.size()<< " pieces" << endl;
+    cout<< "Parsed Torrent File:" << endl;
+    cout << "Announce URL: " << bencode_torrent.Announce << endl;
+    cout << "Name: " << bencode_torrent.Info.Name << endl;
+    cout << "Piece Length: " << bencode_torrent.Info.PieceLength << " bytes" << endl;
+    cout << "Total Length: " << bencode_torrent.Info.Length << " bytes" << endl;
+    cout << "Pieces: " << bencode_torrent.Info.Pieces.size()<< " pieces" << endl;
 
     return toTorrentFile(bencode_torrent,info);
 }

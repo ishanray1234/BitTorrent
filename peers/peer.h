@@ -5,19 +5,21 @@
 #include <vector>
 #include <iostream>
 
+using namespace std;
+
 class Peer {
 public:
-    std::string ip;
+    string ip;
     int port;
 
-    Peer(const std::string& ipAddress, int portNumber)
+    Peer(const string& ipAddress, int portNumber)
         : ip(ipAddress), port(portNumber) {}
 
     void display() const {
-        std::cout << "Peer IP: " << ip << ", Port: " << port << std::endl;
+        cout << "Peer IP: " << ip << ", Port: " << port << endl;
     }
 };
 
-std::vector<Peer> Unmarshal(const std::string& buffer);
+vector<Peer> Unmarshal(const string& buffer);
 
 #endif // PEER_H

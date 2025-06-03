@@ -15,7 +15,7 @@ class bencodeTrackerResp{
         string Peers; // List of peers in the response
 
         // Constructor to initialize bencodeTrackerResp with metadata
-        bencodeTrackerResp(int interval, const string& peersList): Interval(interval), Peers(peersList) {}
+        // bencodeTrackerResp(int interval, const string& peersList): Interval(interval), Peers(peersList) {}
         // Function to display tracker response information
         void display() const {
             cout << "Interval: " << Interval << " seconds" << endl;cout << "Peers: " << Peers << endl;}
@@ -25,7 +25,7 @@ string fetchTrackerResponse(string url) {
     // This function should implement the logic to make an HTTP GET request to the tracker URL
     // and return the response as a string.
     // For demonstration purposes, let's assume it returns a dummy response.
-    return "d8:intervali1800e5:peers53:192.168.1.1:6881,10.0.0.2:51413,127.0.0.1:8080e";
+    return "d8:intervali900e5:peers46:192.168.1.1:6881,10.0.0.2:51413,127.0.0.1:8080e";
 }
 
 // Function to percent-encode a byte array
@@ -61,13 +61,14 @@ string buildTrackerURL(TorrentFile* torrent_file, string PeerID, uint16_t port) 
     return base + "?" + query.str();
 }
 
-vector<Peer> requestPeers(TorrentFile* torrent_file, string PeerID, uint16 port) {
+vector<Peer> requestPeers(TorrentFile* torrent_file, string PeerID, uint16_t port) {
     string url = buildTrackerURL(torrent_file, PeerID, port);
 
     // Here you would typically use a library like libcurl to make the HTTP request
     // For demonstration, let's assume we have a function that fetches the response
     string response = fetchTrackerResponse(url);
     cout << "Tracker URL: " << url << endl;
+    cout<< "Tracker response: " << response <<endl;
     size_t pos = 0;
     auto dictionary = decode_bencoded_value(response, pos);
 
@@ -78,12 +79,15 @@ vector<Peer> requestPeers(TorrentFile* torrent_file, string PeerID, uint16 port)
     trackerResponse.Interval = dictionary["interval"].get<int>();
     trackerResponse.Peers = dictionary["peers"].get<string>();
 
+    cout<< trackerResponse.Interval << endl;
+    cout<< trackerResponse.Peers <<"x"<< endl;
+
     if (trackerResponse.Peers.empty()) {
         throw runtime_error("Peers field is empty in tracker response");
     }
     vector<Peer> peers = Unmarshal(trackerResponse.Peers);
 
-    cout << "Tracker response received. Interval: " << trackerResponse.Interval << " seconds." << endl;
+    cout << "Tracker Interval: " << trackerResponse.Interval << " seconds" << endl;
     cout << "Number of peers: " << peers.size() << endl;
     for (const auto& peer : peers) {
         peer.display();

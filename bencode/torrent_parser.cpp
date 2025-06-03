@@ -51,14 +51,16 @@ std::string encode_bencode(const json& j) {
 }
 
 
-auto decode_integer(const std::string& encoded_value, size_t& pos) -> int64_t
-{
-    pos++;
-    const auto end = encoded_value.find_first_of('e', pos);
-    const std::string number_string = encoded_value.substr(pos, end);
+auto decode_integer(const std::string& encoded_value, size_t& pos) -> int64_t {
+    pos++;  // skip 'i'
+    const auto end = encoded_value.find('e', pos);
+    if (end == std::string::npos) throw std::runtime_error("Invalid bencode: missing 'e' for integer");
+    
+    const std::string number_string = encoded_value.substr(pos, end - pos);
     pos = end + 1;
     return std::strtoll(number_string.c_str(), nullptr, 10);
 }
+
 auto decode_string_length(const std::string& encoded_value, const size_t pos, size_t& colon_index) -> int64_t
 {
     colon_index = encoded_value.find(':', pos);

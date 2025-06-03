@@ -12,6 +12,7 @@
 #include "../bencode/torrent_parser.h"
 
 using json = nlohmann::json;
+using namespace std;
 
 // Represents the metadata parsed from a .torrent file
 class TorrentFile {
@@ -23,11 +24,22 @@ public:
     int Length;
     std::string Name;
 
-    TorrentFile(std::string announceUrl, std::array<unsigned char, 20> infoHashValue,
-                std::vector<std::array<unsigned char, 20>> pieceHashesList,
-                int pieceLength, int totalLength, std::string name);
+    void display(){
+        cout << "Announce URL: " << announce << endl;
 
-    void display() const;
+        cout << "Info Hash: ";
+        for (const auto& byte : infoHash) {
+            // Always output 2-digit hex
+            cout << std::hex << std::setw(2) << std::setfill('0') << (int)(byte & 0xff);
+        }
+        cout << std::dec << endl; // Switch back to decimal output
+
+        cout << "Piece Length: " << PieceLength << " bytes" << endl;
+        cout << "Total Length: " << Length << " bytes" << endl;
+        cout << "Name: " << Name << endl;
+        cout << "Number of Pieces: " << pieceHashes.size() << endl;
+    }
+
 };
 
 // Represents the "info" dictionary inside a .torrent file
