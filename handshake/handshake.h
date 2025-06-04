@@ -24,9 +24,10 @@ public:
     void display(){
         cout<< endl << Pstr << endl << infoHash << endl << PeerID << endl;
     }
+
+    static Handshake Read(const string& buffer);
 };
 
 string Serialize(const Handshake& handshake);
-Handshake Read(const string& buffer);
 
 #endif

@@ -8,6 +8,7 @@ using namespace std;
 
 class Bitfield {
 public:
+    Bitfield(string data);
     Bitfield(size_t numPieces);
 
     // Check if a particular piece index is set
@@ -19,7 +20,6 @@ public:
     // Access internal byte vector if needed
     const vector<uint8_t>& data() const;
 
-private:
     vector<uint8_t> bits;
 };
 

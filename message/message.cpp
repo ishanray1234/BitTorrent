@@ -3,6 +3,7 @@
 #include<fstream>
 #include<sstream>
 #include<algorithm>
+#include "message.h"
 
 using namespace std;
 
@@ -16,14 +17,6 @@ enum class MessageID {
     MsgRequest = 6, // MsgRequest requests a block of data from the receiver
     MsgPiece = 7, // MsgPiece delivers a block of data to fulfill a request
     MsgCancel = 8 // MsgCancel cancels a request
-};
-
-class Message {
-    public:
-    MessageID ID;
-    string payload;
-
-    Message(MessageID id, const string& data) : ID(id), payload(data) {}
 };
 
 // 8-bit index -- 8-bit begin -- 8-bit length

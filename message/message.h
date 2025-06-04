@@ -16,11 +16,13 @@ enum class MessageID {
 };
 
 class Message {
-public:
+    public:
     MessageID ID;
     std::string payload;
 
-    Message(MessageID id, const std::string& data);
+    Message(MessageID id, const std::string& data) : ID(id), payload(data) {}
+
+    static Message Read(const std::string& buffer);
 };
 
 // Message construction

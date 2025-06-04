@@ -3,27 +3,15 @@
 #include <vector>
 #include <sstream>
 #include <array>
+#include "handshake.h"
 
 using namespace std;
-
-class Handshake {
-public: 
-    string Pstr;
-    string infoHash;
-    string PeerID;
-
-    Handshake(const string& pstr, const string& infoHash, const string& peerID)
-        : Pstr(pstr), infoHash(infoHash), PeerID(peerID) {}
-
-    Handshake(const string& infoHash, const string& peerID)
-        : Pstr("BitTorrent protocol"), infoHash(infoHash), PeerID(peerID) {}
-};
 
 string Serialize(const Handshake& handshake) {
     return handshake.Pstr + "00000000" + handshake.infoHash + handshake.PeerID;
 }
 
-Handshake Read(const string& buffer) {
+Handshake Handshake::Read(const string& buffer) {
 
     int length = buffer.length();
     
