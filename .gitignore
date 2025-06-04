@@ -10,3 +10,4 @@ test.cpp.torrent
 torrentfile/tracker
 handshake/h
 message/h
+bitfield/h
